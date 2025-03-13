@@ -5,6 +5,9 @@
 # Shannon Pasto https://github.com/shannonpasto/AppleLoops
 #
 # v1.2.3 (21/01/2025)
+# Russell Collis https://github.com/RussellCollis/AppleLoops
+# v1.2.4 (13/03/2025)
+
 ###################
 
 ## uncomment the next line to output debugging to stdout
@@ -22,11 +25,19 @@ appPlist=""  # garageband1047 logicpro1110 mainstage362. multiple plists can be 
 ## function declarations
 
 exit_trap() {
-
-  # clean up
+  
+# clean up
   /bin/rm -rf "${tmpDir}" >/dev/null 2>&1
   /bin/kill "${cafPID}" >/dev/null 2>&1
 
+# Recreate /private/tmp with correct permissions if $4 is not populated
+  if [ -d /private/tmp ]; then
+    echo "tmp folder exists..."
+  else
+    echo "tmp folder doesn't exist, creating..."
+    /bin/mkdir -p /private/tmp
+    /bin/chmod 777 /private/tmp
+  fi
 }
 
 ###############################################################################
