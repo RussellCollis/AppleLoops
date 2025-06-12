@@ -1,0 +1,61 @@
+Logging Variables:
+
+LOG_FILE="/var/log/${ME%.*}.log": Defines the path to the log file. It uses the script's name (without extension) to create a unique log file in /var/log/.
+LOG_LEVEL_DEBUG, LOG_LEVEL_INFO, LOG_LEVEL_WARN, LOG_LEVEL_ERROR: These variables define integer values for different logging levels.
+CURRENT_LOG_LEVEL=$LOG_LEVEL_INFO: This is the most important variable for controlling verbosity. You can change it to LOG_LEVEL_DEBUG to see more detailed messages, or LOG_LEVEL_ERROR to only see critical errors.
+log() Function:
+
+This new function is the core of the logging system.
+It takes a level (e.g., "INFO", "ERROR") and a message as arguments.
+local timestamp=$(date +"%Y-%m-%d %H:%M:%S"): Adds a timestamp to each log entry for better traceability.
+case "$level": This block checks the specified log level against the CURRENT_LOG_LEVEL. If the message's level is equal to or "higher" (numerically lower) than the CURRENT_LOG_LEVEL, it will be printed.
+echo "${timestamp} [${level}] ${message}" | tee -a "$LOG_FILE": This is the key command.
+echo ...: Prints the formatted log message to standard output (console).
+tee -a "$LOG_FILE": Appends the same log message to the specified LOG_FILE. This way, you get both console output and a persistent log.
+Replacing echo with log:
+
+All previous /bin/echo commands have been replaced with calls to the log function (e.g., log INFO "Script started.").
+Contextual Logging: I've added different log levels (INFO, DEBUG, WARN, ERROR) based on the importance of the message.
+INFO: General script progress and important milestones.
+DEBUG: Detailed information useful for troubleshooting, like variable values or command outputs (only visible when CURRENT_LOG_LEVEL is set to LOG_LEVEL_DEBUG).
+WARN: Non-fatal issues that might indicate a problem but don't stop script execution.
+ERROR: Critical failures that often lead to script termination or significant issues.
+Error Handling and log ERROR:
+
+I've added more explicit error checks for commands like mkdir and curl. If a command fails, an ERROR message is logged, and in some cases, the script exits.
+For example, log INFO "Creating temporary directory: ${tmpDir}" /bin/mkdir -p "${tmpDir}" || log ERROR "Failed to create temporary directory: ${tmpDir}" && exit 1
+The || (OR) operator means if mkdir fails (returns a non-zero exit code), the log ERROR command will execute, and then && exit 1 will terminate the script.
+exit_trap Enhancement:
+
+Added logging within the exit_trap function to record cleanup actions.
+How to Use and Observe Logging
+Run the Script:
+
+Bash
+
+sudo ./download-install_apple_loops.sh [your_plist_parameter_if_any]
+(You might need sudo for writing to /var/log and for certain system commands.)
+
+Monitor Console Output:
+You'll see the log messages directly in your terminal.
+
+Check the Log File:
+After the script runs, you can view the log file using:
+
+Bash
+
+cat /var/log/download-install_apple_loops.log
+Or, to follow it in real-time:
+
+Bash
+
+tail -f /var/log/download-install_apple_loops.log
+Adjust Log Level:
+To get more detailed output, change this line near the top of the script:
+
+Bash
+
+CURRENT_LOG_LEVEL=$LOG_LEVEL_DEBUG
+This will enable all DEBUG messages as well.
+
+This logging implementation provides a clear, timestamped record of your script's activities, making it much easier to understand its behavior and troubleshoot any issues.
