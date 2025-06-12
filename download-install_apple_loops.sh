@@ -7,6 +7,7 @@
 # v1.2.3 (21/01/2025)
 # Russell Collis https://github.com/RussellCollis/AppleLoops
 # v1.2.4 (13/03/2025)
+# v1.2.5 (12/06/2025) Logic Pro 1120
 
 ###################
 
@@ -19,7 +20,7 @@
 ME=$(basename "$0")
 # shellcheck disable=SC2034
 BINPATH=$(dirname "$0")
-appPlist=""  # garageband1047 logicpro1110 mainstage362. multiple plists can be specified, separate with a space
+appPlist=""  # garageband1047 logicpro1120 mainstage362. multiple plists can be specified, separate with a space
 
 ###############################################################################
 ## function declarations
